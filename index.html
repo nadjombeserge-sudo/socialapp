@@ -1,0 +1,140 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>SocialApp Demo</title>
+<style>
+body {margin:0; font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,sans-serif; background:#f0f0f0;}
+.screen-content {display:none; padding:20px; height:calc(100vh - 80px); overflow:auto;}
+.screen-content.active {display:block;}
+.tab-bar {position:fixed; bottom:0; width:100%; height:80px; background:#fff; display:flex; justify-content:space-around; align-items:center; border-top:1px solid #ccc;}
+.tab-item {cursor:pointer; text-align:center;}
+.tab-item.active {color:#667eea; font-weight:bold;}
+.video {width:100%; height:300px; background:linear-gradient(45deg,#667eea,#764ba2); display:flex; justify-content:center; align-items:center; color:white; font-size:22px; border-radius:12px; margin-bottom:20px;}
+.story {width:45%; height:150px; background:linear-gradient(45deg,#667eea,#764ba2); margin:5px; border-radius:12px; display:flex; justify-content:center; align-items:center; color:white; font-weight:bold; cursor:pointer; transition:transform 0.2s;}
+.story:hover {transform:scale(1.05);}
+.story-row {display:flex; flex-wrap:wrap; justify-content:space-between;}
+.notification {position:fixed; top:20px; left:50%; transform:translateX(-50%); background:rgba(0,0,0,0.8); color:white; padding:10px 20px; border-radius:20px; opacity:0; transition:all 0.3s; z-index:1000;}
+.notification.show {opacity:1;}
+button {padding:10px 20px; margin:5px; border:none; border-radius:8px; cursor:pointer; background:#667eea; color:white; font-weight:bold; transition:all 0.2s;}
+button:hover {transform:scale(1.05);}
+.chat-list {list-style:none; padding:0; margin:0;}
+.chat-item {display:flex; align-items:center; padding:10px; border-bottom:1px solid #ddd; cursor:pointer; transition:background 0.2s;}
+.chat-item:hover {background:#eee;}
+.avatar {width:50px; height:50px; border-radius:50%; background:linear-gradient(45deg,#667eea,#764ba2); display:flex; align-items:center; justify-content:center; color:white; font-weight:bold; margin-right:12px;}
+.chat-info {flex:1;}
+.chat-name {font-weight:600;}
+.chat-preview {color:#666; font-size:14px;}
+.chat-time {font-size:12px; color:#999;}
+</style>
+</head>
+<body>
+
+<!-- Chat -->
+<div class="screen-content active" id="chat">
+    <h2>Chat</h2>
+    <ul class="chat-list">
+        <li class="chat-item" onclick="notify('Ouverture chat Marie')">
+            <div class="avatar">M</div>
+            <div class="chat-info"><div class="chat-name">Marie</div><div class="chat-preview">Salut, ça va ?</div></div>
+            <div class="chat-time">14:32</div>
+        </li>
+        <li class="chat-item" onclick="notify('Ouverture chat Alex')">
+            <div class="avatar">A</div>
+            <div class="chat-info"><div class="chat-name">Alex</div><div class="chat-preview">Photo envoyée !</div></div>
+            <div class="chat-time">13:15</div>
+        </li>
+    </ul>
+</div>
+
+<!-- Feed -->
+<div class="screen-content" id="feed">
+    <h2>Feed</h2>
+    <div class="video" id="video">Vidéo 1</div>
+    <div>
+        <button onclick="likeVideo()">❤️ Like</button>
+        <button onclick="commentVideo()">💬 Comment</button>
+        <button onclick="shareVideo()">📤 Share</button>
+        <button onclick="saveVideo()">🔖 Save</button>
+    </div>
+</div>
+
+<!-- Camera -->
+<div class="screen-content" id="camera">
+    <h2>Caméra</h2>
+    <div class="video">📷 Caméra</div>
+    <button onclick="captureContent()">Capture</button>
+</div>
+
+<!-- Stories -->
+<div class="screen-content" id="stories">
+    <h2>Stories</h2>
+    <div class="story-row">
+        <div class="story" onclick="notify('Story Marie')">Marie</div>
+        <div class="story" onclick="notify('Story Alex')">Alex</div>
+        <div class="story" onclick="notify('Story Sophie')">Sophie</div>
+        <div class="story" onclick="notify('Ajouter story')">➕ Ajouter</div>
+    </div>
+</div>
+
+<!-- Profil -->
+<div class="screen-content" id="profile">
+    <h2>Profil</h2>
+    <p>Nom : @utilisateur</p>
+    <p>Abonnés : 1.2K</p>
+    <p>Vidéos : 42</p>
+</div>
+
+<!-- Tab bar -->
+<div class="tab-bar">
+    <div class="tab-item active" onclick="switchTab('chat', this)">💬 Chat</div>
+    <div class="tab-item" onclick="switchTab('feed', this)">📱 Feed</div>
+    <div class="tab-item" onclick="switchTab('camera', this)">📷 Caméra</div>
+    <div class="tab-item" onclick="switchTab('stories', this)">⭕ Stories</div>
+    <div class="tab-item" onclick="switchTab('profile', this)">👤 Profil</div>
+</div>
+
+<div class="notification" id="notification"></div>
+
+<script>
+let videos = ['Vidéo 1','Vidéo 2','Vidéo 3','Vidéo 4','Vidéo 5'];
+let currentVideo = 0;
+
+function switchTab(tabId, element){
+    document.querySelectorAll('.tab-item').forEach(t=>t.classList.remove('active'));
+    document.querySelectorAll('.screen-content').forEach(s=>s.classList.remove('active'));
+    element.classList.add('active');
+    document.getElementById(tabId).classList.add('active');
+}
+
+function notify(message){
+    const notif = document.getElementById('notification');
+    notif.textContent = message;
+    notif.classList.add('show');
+    setTimeout(()=>{notif.classList.remove('show');},2000);
+}
+
+// Feed functions
+function likeVideo(){ notify('❤️ Vidéo likée !'); }
+function commentVideo(){ notify('💬 Commentaire'); }
+function shareVideo(){ notify('📤 Vidéo partagée'); }
+function saveVideo(){ notify('🔖 Vidéo sauvegardée'); }
+function captureContent(){ notify('📸 Contenu capturé'); }
+
+function nextVideo(){ currentVideo=(currentVideo+1)%videos.length; document.getElementById('video').textContent=videos[currentVideo]; notify('Vidéo suivante'); }
+function prevVideo(){ currentVideo=(currentVideo-1+videos.length)%videos.length; document.getElementById('video').textContent=videos[currentVideo]; notify('Vidéo précédente'); }
+
+// Swipe feed
+let startY=0;
+const feedDiv=document.getElementById('feed');
+feedDiv.addEventListener('touchstart', e=>startY=e.touches[0].clientY);
+feedDiv.addEventListener('touchend', e=>{
+    let diff=startY - e.changedTouches[0].clientY;
+    if(diff>50){ nextVideo(); }
+    if(diff<-50){ prevVideo(); }
+});
+</script>
+
+</body>
+</html>
